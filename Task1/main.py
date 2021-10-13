@@ -40,55 +40,87 @@ def get_file_size(path):
 
 def load_corpus():
     corpus = load_files(os.getcwd() + '/data', encoding="latin1")
-    # print(corpus)
 
     vectorizer = CountVectorizer()
     X = vectorizer.fit_transform(corpus.data)
     y = corpus.target
-    # print(vectorizer.get_feature_names())
-    # print(X.toarray())
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=None)
-    # print(x_train.toarray())
 
     # ******** TASK 1 PART 6 *********
-    # y_pred = naive_bayes_classifier(x_train, y_train, x_test)
     clf = MultinomialNB()
     clf.fit(x_train, y_train)
     y_pred = clf.predict(x_test)
 
+    create_file(y_test, y_pred, vectorizer, clf, 1)
+
+    # Task 1 #8
+    clf.fit(x_train, y_train)
+    y_pred2 = clf.predict(x_test)
+    create_file(y_test, y_pred2, vectorizer, clf, 2)
+
+    # Task 1 #9
+    clf = MultinomialNB(0.0001)
+    clf.fit(x_train, y_train)
+    y_pred3 = clf.predict(x_test)
+    create_file(y_test, y_pred3, vectorizer, clf, 3)
+
+    # Task 1 #10
+    clf = MultinomialNB(0.9)
+    clf.fit(x_train, y_train)
+    y_pred4 = clf.predict(x_test)
+    create_file(y_test, y_pred4, vectorizer, clf, 4)
+
+
+def create_file(y_test, y_pred, vectorizer, clf, num_try):
+    f = open("bbc-performance.txt", "a")
+    f.write("(a) ************ Multinomial default values, try " + str(num_try) + " ************")
+
     # (b)
     conf_matrix = confusion_matrix(y_test, y_pred)
+    f.write("\n(b)\n" + np.array2string(conf_matrix, separator=', '))
 
     # (c)
     class_report = classification_report(y_test, y_pred)
+    f.write('\n\n(c)\n\n {}'.format(class_report))
 
     # (d)
     acc_score = accuracy_score(y_test, y_pred)
     f1_macro = f1_score(y_test, y_pred, average="macro")
     f1_weighted = f1_score(y_test, y_pred, average="weighted")
+    f.write("\n\n(d) Accuracy score: " + str(acc_score) + "\n    Macro average F1: "
+            + str(f1_macro) + "\n    Weighted average F1: " + str(f1_weighted))
 
     # (e)
-    total_size = get_file_size("/data/business") + get_file_size("/data/entertainment") + \
-                 get_file_size("/data/politics") + get_file_size("/data/sport") + \
-                 get_file_size("/data/tech")
+    total_size = get_file_size("/data/business") + get_file_size("/data/entertainment") \
+                 + get_file_size("/data/politics") + get_file_size("/data/sport") \
+                 + get_file_size("/data/tech")
 
-    prior_business = get_file_size("/data/business")/total_size
-    prior_entertainment = get_file_size("/data/entertainment")/total_size
-    prior_politics = get_file_size("/data/politics")/total_size
-    prior_sport = get_file_size("/data/sport")/total_size
-    prior_tech = get_file_size("/data/tech")/total_size
+    prior_business = get_file_size("/data/business") / total_size
+    prior_entertainment = get_file_size("/data/entertainment") / total_size
+    prior_politics = get_file_size("/data/politics") / total_size
+    prior_sport = get_file_size("/data/sport") / total_size
+    prior_tech = get_file_size("/data/tech") / total_size
+
+    f.write("\n\n(e) Prior probability business: " + str(prior_business)
+            + "\n    Prior probability entertainment: " + str(prior_entertainment)
+            + "\n    Prior probability politics:" + str(prior_politics)
+            + "\n    Prior probability sport: " + str(prior_sport)
+            + "\n    Prior probability technology:" + str(prior_tech))
 
     # (f)
     total_vocab_size = len(vectorizer.get_feature_names())
+    f.write("\n\n(f) Size of vocabulary: " + str(total_vocab_size))
 
     # (g)
     class_tokens = []
     for vector in clf.feature_count_:
         class_tokens.append(sum(vector))
+    f.write("\n\n(g) Total number of words in each class: " + str(class_tokens))
 
     # (h)
     corpus_tokens = sum(class_tokens)
+    f.write("\n\n(h) Number of word-tokens in the entire corpus: " + str(corpus_tokens))
 
     # (i)
     number_classes = []
@@ -96,17 +128,19 @@ def load_corpus():
     for i, vector in enumerate(clf.feature_count_):
         num = vector.size - np.count_nonzero(vector)
         number_classes.append(num)
-        percentage_classes.append(num/class_tokens[i]*100)
-    print(number_classes)
-    print(percentage_classes)
+        percentage_classes.append(num / class_tokens[i] * 100)
+
+    f.write("\n\n(i) Number of words with frequency 0 in each class: " + str(number_classes)
+            + "\n    Percentage of words with frequency 0 in each class: " + str(percentage_classes))
 
     # (j)
     number_corpus = 0
     for vector in clf.feature_count_:
         number_corpus += np.count_nonzero(vector == 1)
-    percentage_corpus = number_corpus/corpus_tokens*100
-    print(number_corpus)
-    print(percentage_corpus)
+    percentage_corpus = number_corpus / corpus_tokens * 100
+
+    f.write("\n\n(j) Number of words with frequency 1 in the entire corpus: " + str(number_corpus) +
+            "\n    Percentage of words with frequency 1 in the entire corpus: " + str(percentage_corpus))
 
     # (k)
     feature_name = vectorizer.get_feature_names()
@@ -117,29 +151,15 @@ def load_corpus():
     for vector in clf.feature_log_prob_:
         log_prob_money.append(vector[index_money])
         log_prob_lady.append(vector[index_lady])
-    print(log_prob_lady)
-    print(log_prob_money)
 
+    f.write("\n\n(k) Log-prob of words \'money\': " + str(log_prob_money)
+            + "\n    and \'lady\': " + str(log_prob_lady))
 
-    #create_file(conf_matrix)
-
-
-def naive_bayes_classifier(x_train, y_train, x_test):
-    clf = MultinomialNB()
-    clf.fit(x_train, y_train)
-    return clf.predict(x_test)
-
-
-def create_file(matrix):
-    f = open("bbc-performance.txt", "a")
-    f.write("(a) ************ Multinomial default values, try 1 ************")
-    f.write("(b) " + matrix)
-    f.write("(c) ")
-
+    f.write("\n\n\n")
     f.close()
 
 
 if __name__ == '__main__':
     # plot_instances()
     load_corpus()
-    #create_file()
+    # create_file()
