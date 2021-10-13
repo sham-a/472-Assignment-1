@@ -2,13 +2,11 @@ import os
 
 import numpy as np
 import matplotlib.pyplot as plt
-import sklearn as sk
 from sklearn.datasets import load_files
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.feature_extraction.text import TfidfTransformer
 
 
 def plot_instances():
@@ -162,4 +160,3 @@ def create_file(y_test, y_pred, vectorizer, clf, num_try):
 if __name__ == '__main__':
     # plot_instances()
     load_corpus()
-    # create_file()
