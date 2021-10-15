@@ -1,5 +1,4 @@
 import os
-
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_files
@@ -158,5 +157,5 @@ def create_file(y_test, y_pred, vectorizer, clf, num_try):
 
 
 if __name__ == '__main__':
-    # plot_instances()
+    plot_instances()
     load_corpus()
