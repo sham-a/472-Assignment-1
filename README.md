@@ -5,5 +5,7 @@
 ### Task 1
 
 - Clone the repo on your machine
-- Open the Task 1 folder on the IDE of your choice (PyCharm recommend
-- Make sure to install the dependencies (they are all in a folder named requirements.txt)
+- Open project folder on the IDE of your choice (PyCharm recommend)
+- Open your terminal and move to the Task1 folder path
+- Use this command to download the library dependencies: 
+  > python -m pip install -r requirements.txt
