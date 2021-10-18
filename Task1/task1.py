@@ -44,7 +44,7 @@ def load_corpus():
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=None)
 
-    # ******** TASK 1 PART 6 *********
+    # Part 6
     clf = MultinomialNB()
     clf.fit(x_train, y_train)
     y_pred = clf.predict(x_test)
