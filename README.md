@@ -1,9 +1,12 @@
-# 472-Assignment-1
+https://github.com/sham-a/472-Assignment-1.git 
 
+# 472-Assignment-1
+ 
  ## How to run the experiements
  
 ### Step 1:
-- Clone the repo on your machine 
+- Clone the repo on your machine, unless you have the zip file
+- If you have the zip file, unzip it
 - Open the project folder (472-Assignment-1) on the IDE of your choice (PyCharm recommended)
  
 ### Step 2: run Task 1
